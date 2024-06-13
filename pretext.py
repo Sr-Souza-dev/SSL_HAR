@@ -1,29 +1,33 @@
 # imports
 import math
 import torch
+import numpy as np
+import pandas as pd
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from data_modules.pretext import PamapDataset
+from data_modules.pretext import HarDataset
+from data.datas import Datas, Sets
 from models.backbone import Backbone, input_linear_size
 from utils.functions import saveBestModel
 from transforms.time_series import rotation, flip, noise_addition, permutation, scaling, time_warp, negation
 
 # hyperparameters
 num_epoch = 200
-batch_size = 1024
+batch_size = 128
 learning_rate = 0.01
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 printQtd = 1
+dataMain = Datas.MOTION.value
 
 # dataloader
 print("Carregando base de dados...")
 transforms = [rotation, flip, noise_addition, permutation, scaling, time_warp, negation]
-dataset = PamapDataset(set="train", transforms = transforms)
+dataset = HarDataset(transforms = transforms, file=dataMain, set=Sets.TRAIN.value)
 data_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True, num_workers=2)
 nums_labels = len(transforms)
 
-dataset_test = PamapDataset(set="test", transforms = transforms)
+dataset_test = HarDataset(transforms = transforms, file=dataMain, set=Sets.TEST.value)
 data_loader_test = DataLoader(dataset=dataset_test, batch_size=batch_size, shuffle=True, num_workers=2)
 
 # models
@@ -49,13 +53,18 @@ n_total_steps = len(data_loader)
 
 # training loop
 print("Iniciando treinamento...")
+
+train_errors = np.asarray([])
+validation_errors = np.asarray([])
+best_val_loss = 500
 for epoch in range(num_epoch):
     # Treinamento
     model.train()
+    train_loss = 0
     for i, (data, labels) in enumerate(data_loader):
         outputs = model(data)
         loss = criterion(outputs, labels)
-
+        train_loss += loss.item()
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -74,6 +83,15 @@ for epoch in range(num_epoch):
     val_loss /= len(data_loader_test)
     print(f' Validation Loss: {val_loss:.4f}')
 
+    train_errors = np.append(train_errors, train_loss/len(data_loader))
+    validation_errors = np.append(validation_errors, val_loss)
+
+    if val_loss < best_val_loss:
+        best_val_loss = val_loss
+        best_model = model.state_dict()  # Salva os parâmetros do modelo
+
+
+model.load_state_dict(best_model)
 
 
 accTotal = 0
@@ -107,5 +125,10 @@ with torch.no_grad():
         acc = 100.0 * n_class_correct[i] / n_class_samples[i]
         print(f'Accuracy of {dataset_test.getLabel(i)} ({n_class_correct[i]}/{n_class_samples[i]} | {n_each_class_samples[i]}): {acc} %')
 
-backbone = backbone
-saveBestModel(accuracy=accTotal, batch_size=batch_size, epoch=num_epoch, model=backbone, path="best_models/", file_name="backbone")
+saveBestModel(accuracy=accTotal, batch_size=batch_size, epoch=num_epoch, model=backbone, path="best_models/", file_name=f"backbone_{dataMain}")
+
+df = pd.DataFrame({
+    Sets.TRAIN.value : train_errors,
+    Sets.VALIDATION.value : validation_errors
+})
+df.to_csv(f"results_data/backbone_{dataMain}_train.dat", sep=" ", index=False)

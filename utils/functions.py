@@ -35,8 +35,13 @@ def loadBestModel(path, device, file_name='model'):
         return last_checkpoint['model']
     print(f"Modelo '{file_name}' não encontrado!")
 
+def loadCheckPointData(path, device, file_name='model'):
+    fullpath = f"{path}{file_name}.pth"
+    if verifyFile(fullpath):
+        last_checkpoint = torch.load(fullpath, map_location=device)
+        return last_checkpoint
+    print(f"Modelo '{file_name}' não encontrado!")
 
-    
 def printModelWeights(model):
     # Print the first layer of the model
     for name, param in model.named_parameters():
