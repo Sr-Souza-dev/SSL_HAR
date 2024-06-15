@@ -10,14 +10,20 @@ def verifyPath(path):
     if not folder.exists():
         folder.mkdir()
 
-def saveBestModel(path, batch_size, epoch, accuracy, model: torch.nn.Module, file_name='model'):
+def saveBestModel(
+    path, 
+    batch_size, 
+    epoch, 
+    accuracy, 
+    model: torch.nn.Module, 
+    file_name='model'
+):
     checkpoint = {
         "batch_size": batch_size,
         "epoch": epoch,
         "accuracy": accuracy,
-        "model": model.state_dict()
+        "model": model
     }
-
     fullpath = f"{path}{file_name}.pth"
     verifyPath(path)
     last_accuracy = 0
@@ -34,6 +40,7 @@ def loadBestModel(path, device, file_name='model'):
         last_checkpoint = torch.load(fullpath, map_location=device)
         return last_checkpoint['model']
     print(f"Modelo '{file_name}' não encontrado!")
+    return None
 
 def loadCheckPointData(path, device, file_name='model'):
     fullpath = f"{path}{file_name}.pth"
@@ -41,6 +48,7 @@ def loadCheckPointData(path, device, file_name='model'):
         last_checkpoint = torch.load(fullpath, map_location=device)
         return last_checkpoint
     print(f"Modelo '{file_name}' não encontrado!")
+    return None
 
 def printModelWeights(model):
     # Print the first layer of the model

@@ -114,7 +114,7 @@ class Noise_addition:
     def __call__(self, x: torch.Tensor):
         new_x = x.clone()
         for i in range(x.shape[0]):
-            new_x[i].add_(torch.tensor([np.random.normal(loc=0, scale=1) for _ in range(new_x[i].numel())], dtype=new_x[i].dtype))
+            new_x[i].add_(torch.tensor([np.random.normal(loc=0, scale=0.02) for _ in range(new_x[i].numel())], dtype=new_x[i].dtype))
         return new_x
     def getName(self):
         return "Noise_addition"

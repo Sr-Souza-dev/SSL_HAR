@@ -20,7 +20,7 @@ def plot_instance_data(data: torch.Tensor, old_data: torch.Tensor, title = "tran
     axs[0,0].set_xlabel('Índice')
     axs[0,0].set_ylabel('Valor')
     axs[0,0].legend()
-    axs[1,0].set_title(f'{oldTitle}_Acc')
+    axs[1,0].set_title(f'{oldTitle}_Gyr')
     axs[1,0].set_xlabel('Índice')
     axs[1,0].set_ylabel('Valor')
     axs[1,0].legend()
