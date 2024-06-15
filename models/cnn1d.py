@@ -52,13 +52,13 @@ class ProjectionHead(L.LightningModule):
 class PredictionHead(L.LightningModule):
     def __init__(self, num_classes=6):
         super().__init__()
-        # self.linear1 = nn.Linear(input_linear_size, num_classes)
-        self.linear1 = nn.Linear(input_linear_size, 40)
-        self.linear2 = nn.Linear(40, num_classes)
+        self.linear1 = nn.Linear(input_linear_size, num_classes)
+        # self.linear1 = nn.Linear(input_linear_size, 40)
+        # self.linear2 = nn.Linear(40, num_classes)
     
     def forward(self, x):
         x = F.leaky_relu(input=self.linear1(x), negative_slope=0.01)
-        x = F.leaky_relu(input=self.linear2(x), negative_slope=0.01)
+        # x = F.leaky_relu(input=self.linear2(x), negative_slope=0.01)
         return x
 
 # Monta um modelo completo a partir das entradas

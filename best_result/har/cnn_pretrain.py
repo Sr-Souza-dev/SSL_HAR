@@ -13,7 +13,6 @@ for i, part in enumerate(split_path):
 
 import math
 import torch
-import numpy as np
 import pandas as pd
 from models.cnn1d import CNN1d
 from utils.enums import Datas, Sets, ModelTypes
@@ -23,6 +22,7 @@ from transforms.har import rotation, flip, noise_addition, permutation, scaling,
 printQtd = 1
 num_epoch = 320
 batch_size = 32
+with_validation = False
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Optim
@@ -65,26 +65,29 @@ for epoch in range(num_epoch):
         loss.backward()
         optimizer.step()
         if (i+1) % math.floor(n_total_steps/printQtd) == 0:
-            print (f'Epoch [{epoch+1:4d}/{num_epoch}], Step [{i+1:4d}/{n_total_steps}], Loss: {loss.item():.4f}', end= "" if n_total_steps/printQtd+i >= n_total_steps else "\n")
+            print (f'Epoch [{epoch+1:4d}/{num_epoch}], Step [{i+1:4d}/{n_total_steps}], Loss: {loss.item():.4f}', end= "" if n_total_steps/printQtd+i >= n_total_steps and with_validation else "\n")
 
     lr_scheduler.step()
 
-    # Validação
-    model_p.eval()
-    val_loss = 0
-    with torch.no_grad():
-        for batch in test_dl:
-            val_loss += model_p.validation_step(batch)
-    
-    val_loss /= len(test_dl)
-    print(f' Validation Loss: {val_loss:.4f}')
+    if with_validation:
+        # Validação
+        model_p.eval()
+        val_loss = 0
+        with torch.no_grad():
+            for batch in test_dl:
+                val_loss += model_p.validation_step(batch)
+        
+        val_loss /= len(test_dl)
+        print(f' Validation Loss: {val_loss:.4f}')
 
-    train_errors.append(train_loss/len(train_dl))
-    validation_errors.append(val_loss.item())
+        train_errors.append(train_loss/len(train_dl))
+        validation_errors.append(val_loss.item())
 
-    if val_loss < best_val_loss:
-        best_val_loss = val_loss
-        best_model = model_p.state_dict()  # Salva os parâmetros do modelo
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_model = model_p.state_dict()  # Salva os parâmetros do modelo
+    else:
+        best_model = model_p.state_dict()
 
 model_p.load_state_dict(best_model)
 

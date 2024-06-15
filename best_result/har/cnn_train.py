@@ -13,7 +13,6 @@ for i, part in enumerate(split_path):
 
 import torch
 import math
-import numpy as np
 import pandas as pd
 from data_modules.har import HarDataModule as HarDataModuleDownstram
 from utils.enums import Datas, Sets, ModelTypes
@@ -28,12 +27,12 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Optim config backbone
 learning_rate_bb = 0.02
-step_size_bb = 200
+step_size_bb = 100
 gamma_bb = 0.5
 
 # Optim config pred_head
 learning_rate_ds = 0.01
-step_size_ds = 200
+step_size_ds = 100
 gamma_ds = 0.5
 
 # Optim multi test configs
