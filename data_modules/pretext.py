@@ -40,16 +40,18 @@ class HarDataModule(L.LightningDataModule):
     def __init__(
         self,
         batch_size: int = 32,
-        main_data = Datas.MOBIT
+        main_data = Datas.MOBIT,
+        ref="./"
     ):
         super().__init__()
         self.main_data = main_data
+        self.ref = ref
         root_data_dir = f"data/{self.main_data.value}"
         self.root_data_dir = Path(root_data_dir)
 
         self.batch_size = batch_size
         fetch_data(
-            root_data_dir = self.root_data_dir,
+            root_data_dir = f"{ref}{self.root_data_dir}",
             type = self.main_data.type,
             files = ['train', 'test'],
             zip_name = f'{self.main_data.value}.zip',
@@ -74,7 +76,7 @@ class HarDataModule(L.LightningDataModule):
     
     def get_dataloader(self, set:Sets, transforms:list, with_flatter=True, shuffle=True):
         return self._get_dataset_dataloader(
-            f"{self.root_data_dir}/{set}.{self.main_data.type}", 
+            path=f"{self.ref}{self.root_data_dir}/{set}.{self.main_data.type}", 
             shuffle=shuffle,
             transforms = transforms,
             with_flatter = with_flatter

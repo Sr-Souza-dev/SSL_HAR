@@ -33,3 +33,6 @@ class Sets(Enum):
 class ModelTypes(Enum):
     PRETEXT = "pretext"
     DOWNSTREAM = "downstream"
+
+main_data = Datas.MOTION
+teste_size = 2

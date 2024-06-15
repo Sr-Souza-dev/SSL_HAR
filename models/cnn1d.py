@@ -52,10 +52,13 @@ class ProjectionHead(L.LightningModule):
 class PredictionHead(L.LightningModule):
     def __init__(self, num_classes=6):
         super().__init__()
-        self.linear1 = nn.Linear(input_linear_size, num_classes)
+        # self.linear1 = nn.Linear(input_linear_size, num_classes)
+        self.linear1 = nn.Linear(input_linear_size, 40)
+        self.linear2 = nn.Linear(40, num_classes)
     
     def forward(self, x):
         x = F.leaky_relu(input=self.linear1(x), negative_slope=0.01)
+        x = F.leaky_relu(input=self.linear2(x), negative_slope=0.01)
         return x
 
 # Monta um modelo completo a partir das entradas
@@ -65,12 +68,15 @@ class CNN1d(L.LightningModule):
         type = ModelTypes.PRETEXT.value, 
         data_label = Datas.MOBIT.value,
         require_grad = True,
-        num_classes=6
+        num_classes=6,
+        ref = './'
+
     ):
         super().__init__()
         self.num_classes = num_classes
         self.data_label = data_label
         self.type_task = type
+        self.ref = ref
         self.criterion = nn.CrossEntropyLoss()
 
         if type == ModelTypes.PRETEXT.value:
@@ -116,19 +122,18 @@ class CNN1d(L.LightningModule):
 
     def load_backbone(self, device='cpu', require_grad = True):
         try:
-            # self.backbone.load_state_dict(
-            #     loadBestModel(
-            #         device=device,
-            #         path=models_path, 
-            #         file_name=f"backbone_{self.data_label}"
-            #     )
-            # )
-            self.backbone = loadBestModel(
-                device=device,
-                path=models_path, 
-                file_name=f"backbone_{self.data_label}"
+            self.backbone.load_state_dict(
+                loadBestModel(
+                    device=device,
+                    path=f"{self.ref}{models_path}", 
+                    file_name=f"backbone_{self.data_label}"
+                )
             )
-            self.backbone = Backbone()
+            # self.backbone = loadBestModel(
+            #     device=device,
+            #     path=f"{self.ref}{models_path}", 
+            #     file_name=f"backbone_{self.data_label}"
+            # )
             self.backbone.require_grad(require_grad)
             self.backbone.requires_grad_(require_grad)
         except:
@@ -140,7 +145,7 @@ class CNN1d(L.LightningModule):
             batch_size=batch_size, 
             epoch=num_epoch, 
             model=self.backbone.state_dict(), 
-            path=models_path, 
+            path=f"{self.ref}{models_path}", 
             file_name=f"backbone_{self.data_label}"
         )
 
@@ -150,7 +155,7 @@ class CNN1d(L.LightningModule):
             batch_size=batch_size, 
             epoch=num_epoch, 
             model=self.backbone.state_dict(), 
-            path=models_path, 
+            path=f"{self.ref}{models_path}", 
             file_name=f"model_{self.data_label}_{self.type_task}"
         )
 

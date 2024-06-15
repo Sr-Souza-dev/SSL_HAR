@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_instance_data(data: torch.Tensor, old_data: torch.Tensor, title = "transformation", oldTitle = "Orignal"):
+    plt.clf()  # Limpa a figura atual
+    plt.close()  # Fecha a figura
+    
     np_data = data.numpy()
     np_old_data = old_data.numpy()
 
@@ -41,6 +44,9 @@ def plot_instance_data(data: torch.Tensor, old_data: torch.Tensor, title = "tran
     plt.show()
 
 def plot_curves(data1: np.array, data2: np.array, title = "Plot Curves", data1_legend = "Data 1", data2_legend = "Data 2"):
+    plt.clf()  # Limpa a figura atual
+    plt.close()  # Fecha a figura
+
     plt.plot(data1, label={data1_legend})
     plt.plot(data2, label={data2_legend})
     plt.title(title)
@@ -50,6 +56,9 @@ def plot_curves(data1: np.array, data2: np.array, title = "Plot Curves", data1_l
     plt.show()
 
 def plot_multicurves(datas = [], x=[], legends = [], title = "Plot Curves", x_label = "Porcentagem", y_label = "Acurácia", path = None):
+    plt.clf()  # Limpa a figura atual
+    plt.close()  # Fecha a figura
+
     for idx, data in enumerate(datas):
         plt.plot(x, data, label=legends[idx])
 
