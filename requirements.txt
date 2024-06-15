@@ -1,0 +1,14 @@
+torch
+torchvision
+torchaudio
+matplotlib
+scikit-learn
+numpy
+transforms3d
+scipy
+pandas
+jsonargparse[signatures]>=4.26.1
+lightning
+tifffile
+torchmetrics
+torchsummary
