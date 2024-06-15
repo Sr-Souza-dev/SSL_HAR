@@ -12,11 +12,11 @@ Este projeto possui a seguinte estrutura:
 - `report_results/`: contém os scripts para gerar os resultados apresentados no relatório técnico.
 
 ## Notebooks
-Os arquivos `ipynb` são demonstrativos de todo o processo de treinamento e transformações. Dentre eles, nos temos:
+Os arquivos `ipynb` são demonstrativos de todas as etapas realizadas neste trabalho. Dentre eles, temos:
 - `har_cnn1d_training.ipynb`: apresenta todo o processo de treinamento da tarefa de pretexto e também para a tarefa de downstream.
 - `har_transformations.ipynb`: apresenta todas as transformações realizadas que foram utilizadas na tarefa de pretexto.
 - `required_packages.ipynb`: realiza a instalação de todos os pacotes necessário para a execução do projeto.
-- `report_results/har_cnn.ipynb`: gera uma serie de métricas e gráficos avaliativos.
+- `report_results/har_cnn.ipynb`: gera uma serie de métricas e gráficos.
 
 ## Instalação
 Utilizamos Contêineres do VSCode para executar o projeto. Para rodar o projeto, você precisa ter Docker e VSCode instalados em sua máquina.
@@ -28,9 +28,6 @@ Dentro do contêiner, você pode instalar as dependências executando o seguinte
 pip install -r requirements.txt
 ```
 
-## Autor
-- [Gabriel Rosa](https://github.com/Sr-Souza-dev)
-
 ## Self Supervised Learning (SSL)
 O desafio de obter grandes volumes de dados rotulados para treinar modelos de aprendizado de máquina é crucial para o desempenho final desses modelos. No entanto, rotular dados pode ser trabalhoso e caro, levando ao desenvolvimento de técnicas como o aprendizado auto-supervisionado (SSL).
 
@@ -39,6 +36,9 @@ No SSL, os modelos são treinados inicialmente em dados não rotulados através 
 Após essa fase de pré-treinamento, parte do modelo (o "backbone") pode ser transferido e ajustado para uma tarefa específica de interesse (a tarefa de downstream), como classificação de imagens ou análise de sentimentos. Este processo beneficia-se da representação aprendida durante o pré-treinamento, que captura características úteis dos dados de entrada de forma geral.
 
 Essa abordagem visa iniciar o treinamento com uma inicialização melhorada do modelo, potencialmente reduzindo a necessidade de grandes quantidades de dados rotulados desde o início. Isso não apenas economiza recursos de anotação manual, mas também pode resultar em modelos mais robustos e eficazes em uma variedade de tarefas de aprendizado de máquina.
+
+## Autor
+- [Gabriel Rosa](https://github.com/Sr-Souza-dev)
 
 ## Licença
 Este projeto está licenciado sob a Licença GPL-3.0 - consulte o arquivo [LICENSE](LICENSE) para mais detalhes.

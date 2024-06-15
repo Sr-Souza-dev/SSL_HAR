@@ -79,7 +79,7 @@ class CNN1d(L.LightningModule):
 
         elif type == ModelTypes.DOWNSTREAM.value:
             self.backbone = Backbone()
-            self.pred_head = ProjectionHead(self.num_classes)
+            self.pred_head = PredictionHead(self.num_classes)
             self.load_backbone(require_grad=require_grad)
         
         else:
@@ -115,16 +115,22 @@ class CNN1d(L.LightningModule):
         self.backbone.require_grad(state=state)
 
     def load_backbone(self, device='cpu', require_grad = True):
-        self.backbone = Backbone()
         try:
-            self.backbone.load_state_dict(
-                loadBestModel(
-                    device=device,
-                    path=models_path, 
-                    file_name=f"backbone_{self.data_label}_{self.type_task}"
-                )
+            # self.backbone.load_state_dict(
+            #     loadBestModel(
+            #         device=device,
+            #         path=models_path, 
+            #         file_name=f"backbone_{self.data_label}"
+            #     )
+            # )
+            self.backbone = loadBestModel(
+                device=device,
+                path=models_path, 
+                file_name=f"backbone_{self.data_label}"
             )
+            self.backbone = Backbone()
             self.backbone.require_grad(require_grad)
+            self.backbone.requires_grad_(require_grad)
         except:
             print("Erro ao carregar modelo de backbone! (Modelo padrão gerado)")
     
@@ -133,9 +139,9 @@ class CNN1d(L.LightningModule):
             accuracy=accuracy, 
             batch_size=batch_size, 
             epoch=num_epoch, 
-            model=self.backbone, 
+            model=self.backbone.state_dict(), 
             path=models_path, 
-            file_name=f"backbone_{self.data_label}_{self.type_task}"
+            file_name=f"backbone_{self.data_label}"
         )
 
     def save_full_model(self, num_epoch, accuracy, batch_size):
@@ -143,7 +149,7 @@ class CNN1d(L.LightningModule):
             accuracy=accuracy, 
             batch_size=batch_size, 
             epoch=num_epoch, 
-            model=self.backbone, 
+            model=self.backbone.state_dict(), 
             path=models_path, 
             file_name=f"model_{self.data_label}_{self.type_task}"
         )

@@ -48,3 +48,17 @@ def plot_curves(data1: np.array, data2: np.array, title = "Plot Curves", data1_l
     plt.ylabel('Valor')
     plt.legend()
     plt.show()
+
+def plot_multicurves(datas = [], x=[], legends = [], title = "Plot Curves", x_label = "Porcentagem", y_label = "Acurácia", path = None):
+    for idx, data in enumerate(datas):
+        plt.plot(x, data, label=legends[idx])
+
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.legend()
+
+    if path:
+        plt.savefig(f'{path}/{y_label}.png')
+        
+    plt.show()

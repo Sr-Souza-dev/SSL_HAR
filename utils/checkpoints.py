@@ -38,6 +38,7 @@ def loadBestModel(path, device, file_name='model'):
     fullpath = f"{path}{file_name}.pth"
     if verifyFile(fullpath):
         last_checkpoint = torch.load(fullpath, map_location=device)
+        print(last_checkpoint)
         return last_checkpoint['model']
     print(f"Modelo '{file_name}' não encontrado!")
     return None

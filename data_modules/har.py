@@ -7,6 +7,7 @@ import pandas as pd
 from torch.utils.data import DataLoader, Dataset
 from utils.enums import Sets, Datas
 from utils.fetch_data import fetch_data
+import math
 
 def extrair_texto(string):
     try:
@@ -15,13 +16,22 @@ def extrair_texto(string):
         return resultado
     except IndexError:
         return "Padrão não encontrado"
-    
+
+# É utilizado apenas para garantir que os mesmos dados são pegados para percentuais diferentes
+# columns = [45,0,26,39,49,54,22,53,32,15,24,5,19,29,17,4,11,58,6,2,37,42,31,8,35,20,50,25,43,21,1,23,40,44,7,59,30,28,46,48,41,55,12,47,14,16,38,52,18,56,51,36,57,34,27,13,10,3,9,33]
 class HarDataset(Dataset):
-    def __init__(self, path, with_flatter=True):
+    def __init__(self, path, with_flatter=True, percent = 1):
         # read data
         xy = pd.read_csv(f'{path}', sep=',')
-        y = xy['csv'].apply(extrair_texto).values
+        xy = xy.sample(frac=percent)
+
+        if percent < 1:
+            xy = xy.sample(frac=percent, random_state=42)
+            # total = math.ceil(percent * len(xy))
+            # y = xy.iloc[columns[0:total]]
+
         x = xy.iloc[:, 1:361].values
+
         if(with_flatter):
             x = x.reshape((-1, 6, 60))
 
@@ -63,8 +73,8 @@ class HarDataModule(L.LightningDataModule):
             url = self.mainData.url
         )        
 
-    def _get_dataset_dataloader(self, path: Path, shuffle: bool, with_flatter:bool) -> DataLoader[HarDataset]:
-        dataset = HarDataset(path, with_flatter)
+    def _get_dataset_dataloader(self, path: Path, shuffle: bool, with_flatter:bool, percent=1) -> DataLoader[HarDataset]:
+        dataset = HarDataset(path, with_flatter, percent)
 
         dataloader = DataLoader(
             dataset,
@@ -74,10 +84,11 @@ class HarDataModule(L.LightningDataModule):
         )
         return dataloader, dataset
     
-    def get_dataloader(self, set:Sets, with_flatter=True, shuffle=True):
+    def get_dataloader(self, set:Sets, with_flatter=True, shuffle=True, percent=1):
         return self._get_dataset_dataloader(
             f"{self.root_data_dir}/{set}.{self.mainData.type}", 
             shuffle=shuffle,
-            with_flatter = with_flatter
+            with_flatter = with_flatter,
+            percent = percent
         )
         

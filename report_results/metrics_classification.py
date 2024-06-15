@@ -21,12 +21,12 @@ def auc_roc(y_true, y_pred_proba):
 
 def evaluate_classification(y_true, y_pred, y_pred_proba=None, average = "weighted"):
     metrics = {
-        'Acurácia': accuracy(y_true, y_pred),
-        'Precisão': precision(y_true, y_pred, average=average),
-        'Revocação': recall(y_true, y_pred, average=average),
-        'Pontuação F1': f1(y_true, y_pred, average=average),
-        'AUC-ROC': auc_roc(y_true, y_pred_proba) if y_pred_proba else "None",
-        'Matriz de Confusão': confusion_mat(y_true, y_pred)
+        'accuracy': accuracy(y_true, y_pred),
+        'precision': precision(y_true, y_pred, average=average),
+        'recall': recall(y_true, y_pred, average=average),
+        'f1_score': f1(y_true, y_pred, average=average),
+        'auc_roc': auc_roc(y_true, y_pred_proba) if y_pred_proba else "None",
+        'confusion_mat': confusion_mat(y_true, y_pred)
     }
     return metrics
 
