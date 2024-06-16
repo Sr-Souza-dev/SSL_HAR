@@ -36,7 +36,7 @@ train_dl, train_ds = data_module.get_dataloader(set=Sets.TRAIN.value, shuffle=Tr
 test_dl, test_ds   = data_module.get_dataloader(set=Sets.TEST.value, shuffle=False, transforms=transforms)
 num_classes = len(transforms)
 
-model_p = CNN1d(data_label=main_data.value, num_classes=num_classes, require_grad=True, type=ModelTypes.PRETEXT.value)
+model_p = CNN1d(data_label=main_data.value, num_classes=num_classes, require_grad=True, type=ModelTypes.PRETEXT.value, ref="../../")
 print(model_p)
 
 # import lightning as L

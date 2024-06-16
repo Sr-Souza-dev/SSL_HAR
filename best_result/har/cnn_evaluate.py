@@ -8,58 +8,38 @@ from utils.checkpoints import loadCheckPointData
 from report_results.metrics_classification import evaluate_classification
 
 path_reports = f"../../report_results/{Datas.HAR.value}/{main_data.value}_{teste_size}/"
+main_path = "../../report_results/har/percent"
 
+# Carrega os melhores modelos para uma determinada base de dados
 ck = loadCheckPointData(path="../../best_models/", file_name=f"backbone_{main_data.value}", device="cpu")
-print("Best Acuracy: ", ck['accuracy'])
+print(f"Best Accuracy {main_data.value} Pretext: ", ck['accuracy'])
+ck = loadCheckPointData(path="../../best_models/", file_name=f"model_{main_data.value}_{ModelTypes.DOWNSTREAM.value}", device="cpu")
+print(f"Best Accuracy {main_data.value} Downstream: ", ck['accuracy'])
 
+# Plota os graficos de treinamento para cada base de dados
 # df = pd.read_csv(f"{path_reports}errors_{ModelTypes.PRETEXT.value}.dat", sep=" ")
 # plot_curves(
 #     data1=df[Sets.TRAIN.value], 
 #     data2=df[Sets.VALIDATION.value], 
-#     data1_legend="Treino", 
-#     data2_legend="Validação", 
-#     title="Treino x Validação"
+#     data1_legend=Sets.TRAIN.value, 
+#     data2_legend=Sets.VALIDATION.value, 
+#     title=f"{Sets.TRAIN.value} x {Sets.VALIDATION.value}",
+#     path=f"{main_path}/plots",
+#     fileName="pretext_cnn"
 # )
-
-# df = pd.read_csv(f"{path_reports}predictions_{ModelTypes.PRETEXT.value}.dat", sep=" ")
-# metrics = evaluate_classification(
-#     y_pred= df[Sets.PREDICTION.value],
-#     y_true= df[Sets.REAL.value]
-# )
-
-# for key, item in metrics.items():
-#     if not key == "Matriz de Confusão":
-#         print(f"{key}: {item}")
-#     else:
-#         print(f"{key}:\n{item}")
-
-ck = loadCheckPointData(path="../../best_models/", file_name=f"model_{main_data.value}_{ModelTypes.DOWNSTREAM.value}", device="cpu")
-print("Best Acuracy: ", ck['accuracy'])
-
 # df = pd.read_csv(f"{path_reports}errors_{ModelTypes.DOWNSTREAM.value}.dat", sep=" ")
 # plot_curves(
 #     data1=df[Sets.TRAIN.value], 
 #     data2=df[Sets.VALIDATION.value], 
-#     data1_legend="Treino", 
-#     data2_legend="Validação", 
-#     title="Treino x Validação"
+#     data1_legend=Sets.TRAIN.value, 
+#     data2_legend=Sets.VALIDATION.value, 
+#     title=f"{Sets.TRAIN.value} x {Sets.VALIDATION.value}",
+#     path=f"{main_path}/plots",
+#     fileName="downstream_cnn"
 # )
-
-# df = pd.read_csv(f"{path_reports}predictions_{ModelTypes.DOWNSTREAM.value}.dat", sep=" ")
-# metrics = evaluate_classification(
-#     y_pred= df[Sets.PREDICTION.value],
-#     y_true= df[Sets.REAL.value]
-# )
-
-# for key, item in metrics.items():
-#     if not key == "confusion_mat":
-#         print(f"{key}: {item}")
-#     else:
-#         print(f"{key}:\n{item}")
 
 percents = [1, 20, 40, 60, 80, 100]
 
-main_path = "../../report_results/har/percent"
 path_cnn = f"{main_path}/cnn"
 path_var = f"{main_path}/vae"
 

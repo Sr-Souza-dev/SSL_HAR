@@ -20,25 +20,25 @@ from models.cnn1d import CNN1d
 
 printQtd = 1
 batch_size = 5
-num_epoch = 200
+num_epoch = 500
 isFreezing = False
 with_validation = False
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Optim config backbone
-learning_rate_bb = 0.02
-step_size_bb = 100
-gamma_bb = 0.5
+learning_rate_bb = 0.01
+step_size_bb = 50
+gamma_bb = 0.3
 
 # Optim config pred_head
-learning_rate_ds = 0.01
-step_size_ds = 100
-gamma_ds = 0.5
+learning_rate_ds = 0.03
+step_size_ds = 50
+gamma_ds = 0.4
 
 # Optim multi test configs
-learning_rate = 0.01
-step_size = 200
-gamma = 0.5
+learning_rate = 0.03
+step_size = 50
+gamma = 0.4
 
 data_module = HarDataModuleDownstram(batch_size=batch_size, ref="../../")
 train_dl, train_ds = data_module.get_dataloader(set=Sets.TRAIN.value, shuffle=True)
@@ -188,10 +188,10 @@ for percent in percents:
     )
 
     # Define os otimizadores
-    optimizer1, lr_scheduler1 = model1.configure_optimizers(step_size=step_size, gamma=gamma, learning_rate=learning_rate)
-    optimizer2, lr_scheduler2 = model2.configure_optimizers(step_size=step_size, gamma=gamma, learning_rate=learning_rate)
+    optimizer1_ph, lr_scheduler1_ph = model1.configure_head_optimizers(step_size=step_size_ds, gamma=gamma_ds, learning_rate=learning_rate_ds)
+    optimizer1_bk, lr_scheduler1_bk = model1.configure_backbone_optimizers(step_size=step_size_bb, gamma=gamma_bb, learning_rate=learning_rate_bb)
 
-    optimizer1, lr_scheduler1 = optimizer1[0], lr_scheduler1[0]
+    optimizer2, lr_scheduler2 = model2.configure_optimizers(step_size=step_size, gamma=gamma, learning_rate=learning_rate)
     optimizer2, lr_scheduler2 = optimizer2[0], lr_scheduler2[0]
 
     # Realiza o treinamento
@@ -209,16 +209,19 @@ for percent in percents:
             loss1 = model1.training_step(batch)
             loss2 = model2.training_step(batch)
 
-            optimizer1.zero_grad()
+            optimizer1_ph.zero_grad()
+            optimizer1_bk.zero_grad()
             optimizer2.zero_grad()
 
             loss1.backward()
             loss2.backward()
 
-            optimizer1.step()
+            optimizer1_ph.step()
+            optimizer1_bk.step()
             optimizer2.step()
 
-        lr_scheduler1.step()
+        lr_scheduler1_ph.step()
+        lr_scheduler1_bk.step()
         lr_scheduler2.step()
 
         if with_validation:
