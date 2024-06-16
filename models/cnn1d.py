@@ -7,7 +7,7 @@ from utils.enums import ModelTypes, Sets, Datas
 from torchmetrics.functional import accuracy
 from utils.checkpoints import saveBestModel, loadBestModel
 
-input_linear_size = 288
+input_linear_size = 236
 models_path = "best_models/"
 
 # Seletor de features (backbone)
@@ -15,9 +15,9 @@ class Backbone(L.LightningModule):
     def __init__(self):
         super().__init__()
         self.pool = nn.MaxPool1d(kernel_size=2)
-        self.conv1 = nn.Conv1d(in_channels=6,  out_channels=12, kernel_size=2)
-        self.conv2 = nn.Conv1d(in_channels=12, out_channels=24, kernel_size=2)
-        self.conv3 = nn.Conv1d(in_channels=24, out_channels=48, kernel_size=2)
+        self.conv1 = nn.Conv1d(in_channels=6,  out_channels=19, kernel_size=7)
+        self.conv2 = nn.Conv1d(in_channels=19, out_channels=37, kernel_size=5)
+        self.conv3 = nn.Conv1d(in_channels=37, out_channels=59, kernel_size=3)
 
     def require_grad(self, state = True):
         for param in self.conv1.parameters():

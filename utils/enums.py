@@ -34,5 +34,5 @@ class ModelTypes(Enum):
     PRETEXT = "pretext"
     DOWNSTREAM = "downstream"
 
-main_data = Datas.MOTION
-teste_size = 2
+main_data = Datas.MOBIT
+teste_size = 0

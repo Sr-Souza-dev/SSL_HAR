@@ -43,7 +43,7 @@ def plot_instance_data(data: torch.Tensor, old_data: torch.Tensor, title = "tran
     # Mostrar o gráfico
     plt.show()
 
-def plot_curves(data1: np.array, data2: np.array, title = "Plot Curves", data1_legend = "Data 1", data2_legend = "Data 2"):
+def plot_curves(data1: np.array, data2: np.array, title = "Plot Curves", data1_legend = "Data 1", data2_legend = "Data 2", path=None, fileName="ds"):
     plt.clf()  # Limpa a figura atual
     plt.close()  # Fecha a figura
 
@@ -53,7 +53,11 @@ def plot_curves(data1: np.array, data2: np.array, title = "Plot Curves", data1_l
     plt.xlabel('Índice')
     plt.ylabel('Valor')
     plt.legend()
-    plt.show()
+
+    if path:
+        plt.savefig(f'{path}/{fileName}.png')
+    else:
+        plt.show()
 
 def plot_multicurves(datas = [], x=[], legends = [], title = "Plot Curves", x_label = "Porcentagem", y_label = "Acurácia", path = None):
     plt.clf()  # Limpa a figura atual
@@ -69,5 +73,5 @@ def plot_multicurves(datas = [], x=[], legends = [], title = "Plot Curves", x_la
 
     if path:
         plt.savefig(f'{path}/{y_label}.png')
-        
-    plt.show()
+    else:
+        plt.show()
